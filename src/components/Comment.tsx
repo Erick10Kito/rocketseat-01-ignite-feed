@@ -4,7 +4,14 @@ import { Avatar } from "./Avatar";
 import { ThumbsUp, Trash } from "phosphor-react";
 import { useState } from "react";
 
-export function Comment({ content, onDeleteComment }) {
+interface IComentProps {
+  content: string;
+  onDeleteComment: (coment: string) => void;
+  //aqui estou colocando uma função dentro do interface, coloquei que ela recebe algo e tipei esse algo((coment: string))
+  //e coloquei como void pois como podemos ver no arquivo post.tsx ela não retorna nada!
+}
+
+export function Comment({ content, onDeleteComment }: IComentProps) {
   const [likeCount, setLikeCount] = useState(0);
   function handleDelteComment() {
     onDeleteComment(content);

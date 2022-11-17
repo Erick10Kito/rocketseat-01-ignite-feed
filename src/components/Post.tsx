@@ -3,11 +3,26 @@ import { Comment } from "./Comment";
 import { Avatar } from "./Avatar";
 import { format, formatDistanceToNow } from "date-fns";
 import ptBR from "date-fns/locale/pt-BR";
-import { useState } from "react";
+import { ChangeEvent, FormEvent, InvalidEvent, useState } from "react";
 
-export function Post({ author, publishedAt, content }) {
+interface IAuthor {
+  name: string;
+  role: String;
+  avatarUrl: string;
+}
+interface IContentArray {
+  type: "paragraph" | "link";
+  content: string;
+}
+interface IPostProps {
+  author: IAuthor;
+  publishedAt: Date;
+  content: IContentArray[];
+}
+
+export function Post({ author, publishedAt, content }: IPostProps) {
   const [newCommentText, setNewCommentText] = useState("");
-  const [comments, setComments] = useState([]);
+  const [comments, setComments] = useState([""]);
 
   const publishedDateFormatted = format(
     publishedAt,
@@ -21,7 +36,8 @@ export function Post({ author, publishedAt, content }) {
     locale: ptBR,
     addSuffix: true,
   });
-  function handleNewCommentChange() {
+  function handleNewCommentChange(event: ChangeEvent<HTMLTextAreaElement>) {
+    // coloquei o HTMLTextAreaElement pois quero dizer que esta acointecendo dentro desse elemento
     event.target.setCustomValidity("");
     // coloquei esse event aqui para que o sistema reconhça que quando o usuario digitar quer dizer que não precisa aparecer nenhuma mensagem de erro
 
@@ -29,7 +45,7 @@ export function Post({ author, publishedAt, content }) {
     //usado para setar o valor que chegou dentro da textarea na qual a função esta sendo chammada atraves de um onChange como 'newCommentText'
   }
 
-  function handleCrateNewComment() {
+  function handleCrateNewComment(event: FormEvent) {
     //event.target.comment.value = ""; //usado para zerar o valor do textarea depois de setar o comentario de forma imperativa
     //const newCommentText = event.target.comment.value; // corresponde ao valor inserido na textarea, na qual eu coloquei um 'name="comment"' de forma imperativa
     event.preventDefault();
@@ -37,12 +53,12 @@ export function Post({ author, publishedAt, content }) {
     setNewCommentText(""); //Seta o texto da textarea com aspas vazias para tirar qualquer texto de la, depois que que o submit de setComments for efetuado
   }
 
-  function handleNewCommentInvalid() {
+  function handleNewCommentInvalid(event: InvalidEvent<HTMLTextAreaElement>) {
     //função que troca o texto de invalidação
     event.target.setCustomValidity("Digite antes de publicar");
   }
 
-  function deleteComment(commentToDelete) {
+  function deleteComment(commentToDelete: string) {
     //função para que remove o comentario, lembrando que ela foi feita aqui pelo fato do useState do comment ser feito aqui!
 
     const commentsWithoutDeletedOne = comments.filter((comment) => {
